@@ -23,7 +23,11 @@ const navItems = [
   { icon: Settings, label: "Settings", active: false },
 ];
 
-export default function Sidebar() {
+interface SidebarProps {
+  activeTab?: string;
+}
+
+export default function Sidebar({ activeTab }: SidebarProps) {
   const [open, setOpen] = useState(false);
 
   return (
