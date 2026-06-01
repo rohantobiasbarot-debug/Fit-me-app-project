@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fit-Me — Train Smarter, Live Better</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#F97316',
+            secondary: '#FB923C',
+            success: '#22C55E',
+            background: '#0F1117',
+            card: 'rgba(26,31,46,0.85)',
+            textMain: '#F8FAFC',
+            muted: '#94A3B8',
+            veryMuted: '#64748B',
+          },
+          fontFamily: {
+            condensed: ['Barlow Condensed', 'sans-serif'],
+            barlow: ['Barlow', 'sans-serif'],
+          },
+        },
+      },
+    };
+  </script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #0F1117;
+      color: #F8FAFC;
+      font-family: 'Barlow', sans-serif;
+      min-height: 100vh;
+    }
+    .glass {
+      background: rgba(26,31,46,0.85);
+      border: 1px solid rgba(249,115,22,0.2);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 16px;
+    }
+    .glass-navbar {
+      background: rgba(15,17,23,0.85);
+      border-bottom: 1px solid rgba(249,115,22,0.15);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+    }
+    .btn-primary {
+      background: #F97316;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .btn-primary:hover { background: #ea6d0e; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(249,115,22,0.4); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-success {
+      background: #22C55E;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+    .btn-success:hover { background: #16a34a; transform: translateY(-1px); box-shadow: 0 4px 20px rgba(34,197,94,0.4); }
+    .btn-ghost {
+      background: transparent;
+      color: #94A3B8;
+      border: 1px solid rgba(249,115,22,0.2);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-family: 'Barlow', sans-serif;
+    }
+    .btn-ghost:hover { border-color: rgba(249,115,22,0.6); color: #F97316; }
+    .btn-danger {
+      background: rgba(239,68,68,0.15);
+      color: #ef4444;
+      border: 1px solid rgba(239,68,68,0.3);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .btn-danger:hover { background: rgba(239,68,68,0.3); }
+    input, select, textarea {
+      background: rgba(15,17,23,0.8);
+      border: 1px solid rgba(249,115,22,0.2);
+      color: #F8FAFC;
+      border-radius: 10px;
+      padding: 10px 14px;
+      width: 100%;
+      font-family: 'Barlow', sans-serif;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+    input:focus, select:focus, textarea:focus {
+      border-color: #F97316;
+      box-shadow: 0 0 0 3px rgba(249,115,22,0.15);
+    }
+    input::placeholder { color: #64748B; }
+    select option { background: #1a1f2e; }
+    label { color: #94A3B8; font-size: 13px; font-weight: 500; display: block; margin-bottom: 4px; }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 16px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      color: #94A3B8;
+      font-size: 15px;
+      font-weight: 500;
+      border: 1px solid transparent;
+    }
+    .sidebar-item:hover { background: rgba(249,115,22,0.08); color: #F8FAFC; }
+    .sidebar-item.active {
+      background: rgba(249,115,22,0.15);
+      color: #F97316;
+      border-color: rgba(249,115,22,0.25);
+    }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.03em;
+    }
+    .pill-top { background: rgba(249,115,22,0.15); color: #F97316; border: 1px solid rgba(249,115,22,0.3); }
+    .pill-bottom { background: rgba(59,130,246,0.15); color: #60a5fa; border: 1px solid rgba(59,130,246,0.3); }
+    .pill-dress { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+    .tab-pill {
+      padding: 7px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      color: #94A3B8;
+      border: 1px solid transparent;
+      font-family: 'Barlow Condensed', sans-serif;
+      letter-spacing: 0.03em;
+    }
+    .tab-pill:hover { color: #F8FAFC; }
+    .tab-pill.active {
+      background: rgba(249,115,22,0.15);
+      color: #F97316;
+      border-color: rgba(249,115,22,0.3);
+    }
+    .stat-card { transition: transform 0.2s ease; }
+    .stat-card:hover { transform: translateY(-2px); }
+    .bar { background: rgba(249,115,22,0.25); border-radius: 4px 4px 0 0; transition: all 0.3s ease; position: relative; overflow: hidden; }
+    .bar::after { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(180deg, rgba(249,115,22,0.6) 0%, rgba(249,115,22,0.2) 100%); }
+    .bar.highlight { background: rgba(249,115,22,0.5); }
+    .bar.highlight::after { background: linear-gradient(180deg, #F97316 0%, rgba(249,115,22,0.5) 100%); }
+    .feature-card { transition: transform 0.2s ease, border-color 0.2s ease; cursor: default; }
+    .feature-card:hover { transform: translateY(-3px); border-color: rgba(249,115,22,0.4) !important; }
+    .photo-slot {
+      width: 100%;
+      aspect-ratio: 3/4;
+      border-radius: 12px;
+      border: 2px dashed rgba(249,115,22,0.3);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: border-color 0.2s ease, background 0.2s ease;
+      background: rgba(15,17,23,0.5);
+      overflow: hidden;
+      position: relative;
+    }
+    .photo-slot:hover { border-color: rgba(249,115,22,0.6); background: rgba(249,115,22,0.04); }
+    .photo-slot img { width: 100%; height: 100%; object-fit: cover; position: absolute; top: 0; left: 0; }
+    .overlay-delete {
+      position: absolute;
+      top: 6px; right: 6px;
+      background: rgba(0,0,0,0.6);
+      border: none;
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      color: #fff;
+      font-size: 14px;
+      transition: background 0.2s ease;
+    }
+    .overlay-delete:hover { background: rgba(239,68,68,0.8); }
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 3px; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in { animation: fadeIn 0.3s ease forwards; }
+    @keyframes pulse-glow { 0%,100% { box-shadow: 0 0 0 0 rgba(249,115,22,0.3); } 50% { box-shadow: 0 0 0 8px rgba(249,115,22,0); } }
+    .glow-pulse { animation: pulse-glow 2s ease-in-out infinite; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useCallback } = React;
+
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function detectCategory(name) {
+  const n = name.toLowerCase();
+  if (/trouser|pant|jean|skirt|short|legging|chino|jogger|hose|rock/.test(n)) return 'bottom';
+  if (/dress|jumpsuit|overall|romper|gown|kleid/.test(n)) return 'dress';
+  return 'top';
+}
+
+function categoryLabel(cat) {
+  if (cat === 'bottom') return '👖 Pants/Skirt';
+  if (cat === 'dress') return '👗 Dress/Jumpsuit';
+  return '👕 Top/Jacket';
+}
+
+function CategoryPill({ category }) {
+  const cls = category === 'bottom' ? 'pill-bottom' : category === 'dress' ? 'pill-dress' : 'pill-top';
+  return <span className={`pill ${cls}`}>{categoryLabel(category)}</span>;
+}
+
+const SIZE_ORDER = ['XS','S','M','L','XL','XXL','XXXL'];
+
+function sizeIndex(s) { return SIZE_ORDER.indexOf(s); }
+
+function recommendSize(profile) {
+  const { gender, chest, waist, arm } = profile || {};
+  const sizes = [];
+  const isFemale = gender === 'female';
+
+  if (chest) {
+    const v = parseFloat(chest);
+    if (!isNaN(v)) {
+      const thresholds = isFemale
+        ? [82,87,92,97,102,107]
+        : [88,93,98,103,108,113];
+      const sz = thresholds.findIndex(t => v <= t);
+      sizes.push(sz === -1 ? 6 : sz);
+    }
+  }
+  if (waist) {
+    const v = parseFloat(waist);
+    if (!isNaN(v)) {
+      const thresholds = isFemale
+        ? [63,68,73,78,83,88]
+        : [73,78,83,88,93,98];
+      const sz = thresholds.findIndex(t => v <= t);
+      sizes.push(sz === -1 ? 6 : sz);
+    }
+  }
+  if (arm) {
+    const v = parseFloat(arm);
+    if (!isNaN(v)) {
+      const thresholds = [57,59,61,63,65,67];
+      const sz = thresholds.findIndex(t => v <= t);
+      sizes.push(sz === -1 ? 6 : sz);
+    }
+  }
+  if (sizes.length === 0) return { size: 'M', confidence: 'none', breakdown: [] };
+
+  const avg = sizes.reduce((a,b) => a+b, 0) / sizes.length;
+  const rounded = Math.round(avg);
+  const size = SIZE_ORDER[Math.min(rounded, 6)];
+  const spread = Math.max(...sizes) - Math.min(...sizes);
+  const confidence = spread <= 1 ? 'high' : spread <= 2 ? 'medium' : 'low';
+
+  const breakdown = [];
+  if (chest && !isNaN(parseFloat(chest))) breakdown.push({ label: 'Chest', value: chest + ' cm', size: SIZE_ORDER[Math.min(sizes[breakdown.length] ?? rounded, 6)] });
+  if (waist && !isNaN(parseFloat(waist))) {
+    const idx = chest && !isNaN(parseFloat(chest)) ? 1 : 0;
+    breakdown.push({ label: 'Waist', value: waist + ' cm', size: SIZE_ORDER[Math.min(sizes[idx] ?? rounded, 6)] });
+  }
+  if (arm && !isNaN(parseFloat(arm))) {
+    breakdown.push({ label: 'Arm Length', value: arm + ' cm', size: SIZE_ORDER[Math.min(sizes[sizes.length-1] ?? rounded, 6)] });
+  }
+  return { size, confidence, breakdown };
+}
+
+function uid() { return Math.random().toString(36).slice(2) + Date.now().toString(36); }
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function safeLocalGet(key, fallback) {
+  try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch { return fallback; }
+}
+function safeLocalSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch {}
+}
+
+// ─── Gradient Placeholder ────────────────────────────────────────────────────
+
+function GradientPlaceholder({ category, size = 'full', label }) {
+  const gradient = category === 'bottom'
+    ? 'linear-gradient(135deg, #1e3a5f 0%, #1a2d4a 100%)'
+    : category === 'dress'
+    ? 'linear-gradient(135deg, #3b1a5f 0%, #2d1a4a 100%)'
+    : 'linear-gradient(135deg, #5f2d1a 0%, #4a1f0e 100%)';
+  const emoji = category === 'bottom' ? '👖' : category === 'dress' ? '👗' : '👕';
+  return (
+    <div style={{
+      background: gradient,
+      borderRadius: 10,
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '100%',
+      height: size === 'sm' ? 80 : size === 'md' ? 120 : 160,
+      gap: 6,
+    }}>
+      <span style={{ fontSize: size === 'sm' ? 24 : 36 }}>{emoji}</span>
+      {label && <span style={{ color: '#94A3B8', fontSize: 11 }}>{label}</span>}
+    </div>
+  );
+}
+
+// ─── Landing View ────────────────────────────────────────────────────────────
+
+function LandingView({ onOpenDashboard }) {
+  const features = [
+    { icon: '🧠', title: 'AI Workout Plans', desc: 'Personalized routines built around your goals, schedule, and fitness level.' },
+    { icon: '📈', title: 'Progress Tracking', desc: 'Visualize your gains with detailed charts and milestone achievements.' },
+    { icon: '🥗', title: 'Calorie Intelligence', desc: 'Smart nutrition insights tailored to your workouts and body metrics.' },
+    { icon: '🛌', title: 'Recovery Insights', desc: 'Optimize rest and reduce injury risk with AI-driven recovery plans.' },
+    { icon: '💪', title: '1000+ Exercises', desc: 'Comprehensive library with HD video guides for every movement.' },
+    { icon: '🏆', title: 'Challenges & Streaks', desc: 'Stay motivated with daily challenges, leaderboards, and streak rewards.' },
+  ];
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0F1117' }}>
+      {/* Navbar */}
+      <nav className="glass-navbar" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 100, padding: '0 24px', height: 64, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div style={{ width: 32, height: 32, background: 'linear-gradient(135deg,#F97316,#FB923C)', borderRadius: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16 }}>⚡</div>
+          <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 22, letterSpacing: '0.08em', color: '#F8FAFC' }}>FIT-ME</span>
+        </div>
+        <button className="btn-primary" onClick={onOpenDashboard} style={{ padding: '9px 22px', borderRadius: 10, fontSize: 14 }}>
+          Open Dashboard
+        </button>
+      </nav>
+
+      {/* Hero */}
+      <div style={{ paddingTop: 64 }}>
+        <div style={{ maxWidth: 900, margin: '0 auto', padding: '80px 24px 60px', textAlign: 'center' }}>
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: 8, background: 'rgba(249,115,22,0.12)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 999, padding: '5px 16px', marginBottom: 28 }}>
+            <span style={{ width: 7, height: 7, background: '#22C55E', borderRadius: '50%', display: 'inline-block' }}></span>
+            <span style={{ color: '#F97316', fontSize: 13, fontWeight: 600, fontFamily: 'Barlow Condensed', letterSpacing: '0.05em' }}>AI-POWERED FITNESS + VIRTUAL TRY-ON</span>
+          </div>
+          <h1 style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 'clamp(48px,9vw,96px)', lineHeight: 0.95, color: '#F8FAFC', margin: '0 0 24px', letterSpacing: '-0.01em' }}>
+            TRAIN SMARTER<br />
+            <span style={{ background: 'linear-gradient(90deg, #F97316, #FB923C)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>LIVE BETTER</span>
+          </h1>
+          <p style={{ color: '#94A3B8', fontSize: 18, maxWidth: 520, margin: '0 auto 40px', lineHeight: 1.6 }}>
+            The only fitness app that combines AI workout intelligence with a virtual try-on wardrobe — so you look and feel your best.
+          </p>
+          <button className="btn-success glow-pulse" onClick={onOpenDashboard} style={{ padding: '16px 40px', borderRadius: 14, fontSize: 18, display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+            Open Dashboard →
+          </button>
+
+          {/* Stats */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 40, marginTop: 56, flexWrap: 'wrap' }}>
+            {[
+              { label: 'Active Users', value: '500K+' },
+              { label: 'App Rating', value: '4.9★' },
+              { label: 'Platforms', value: 'iOS & Android' },
+            ].map(s => (
+              <div key={s.label} style={{ textAlign: 'center' }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, color: '#F97316' }}>{s.value}</div>
+                <div style={{ color: '#64748B', fontSize: 13 }}>{s.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Features */}
+        <div style={{ maxWidth: 1100, margin: '0 auto', padding: '0 24px 80px' }}>
+          <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 36, textAlign: 'center', marginBottom: 40, color: '#F8FAFC', letterSpacing: '0.02em' }}>EVERYTHING YOU NEED</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px,1fr))', gap: 20 }}>
+            {features.map(f => (
+              <div key={f.title} className="glass feature-card" style={{ padding: 28 }}>
+                <div style={{ fontSize: 32, marginBottom: 14 }}>{f.icon}</div>
+                <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 20, color: '#F8FAFC', marginBottom: 8 }}>{f.title}</div>
+                <div style={{ color: '#94A3B8', fontSize: 14, lineHeight: 1.6 }}>{f.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Footer */}
+      <div style={{ borderTop: '1px solid rgba(249,115,22,0.1)', padding: '24px', textAlign: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, marginBottom: 8 }}>
+          <span style={{ fontSize: 16 }}>⚡</span>
+          <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 18, color: '#F8FAFC' }}>FIT-ME</span>
+        </div>
+        <p style={{ color: '#64748B', fontSize: 13 }}>© 2026 Fit-Me. Train smarter, live better.</p>
+      </div>
+    </div>
+  );
+}
+
+// ─── Overview Tab ────────────────────────────────────────────────────────────
+
+function OverviewTab() {
+  const stats = [
+    { label: 'Calories Burned', value: '2,847', unit: 'kcal', color: '#F97316', icon: '🔥' },
+    { label: 'Active Minutes', value: '94', unit: 'min', color: '#22C55E', icon: '⏱' },
+    { label: 'Current Streak', value: '12', unit: 'days', color: '#FB923C', icon: '🏆' },
+    { label: 'Total Workouts', value: '48', unit: 'sessions', color: '#60a5fa', icon: '💪' },
+  ];
+
+  const days = ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const values = [65, 80, 45, 90, 70, 100, 55];
+  const maxVal = Math.max(...values);
+  const todayIdx = 4; // Friday highlighted
+
+  return (
+    <div className="fade-in">
+      <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, marginBottom: 24, color: '#F8FAFC', letterSpacing: '0.02em' }}>OVERVIEW</h2>
+
+      {/* Stat cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 16, marginBottom: 28 }}>
+        {stats.map(s => (
+          <div key={s.label} className="glass stat-card" style={{ padding: 22 }}>
+            <div style={{ fontSize: 24, marginBottom: 10 }}>{s.icon}</div>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 32, color: s.color, lineHeight: 1 }}>{s.value}</div>
+            <div style={{ color: '#64748B', fontSize: 12, marginTop: 2 }}>{s.unit}</div>
+            <div style={{ color: '#94A3B8', fontSize: 13, marginTop: 6 }}>{s.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Weekly chart */}
+      <div className="glass" style={{ padding: 24 }}>
+        <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 18, color: '#F8FAFC', marginBottom: 4 }}>WEEKLY ACTIVITY</div>
+        <div style={{ color: '#64748B', fontSize: 13, marginBottom: 24 }}>Minutes active per day</div>
+        <div style={{ display: 'flex', alignItems: 'flex-end', gap: 10, height: 140, paddingBottom: 0 }}>
+          {values.map((v, i) => (
+            <div key={i} style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 6 }}>
+              <div style={{ fontSize: 11, color: i === todayIdx ? '#F97316' : '#64748B', fontWeight: 600 }}>{v}</div>
+              <div
+                className={`bar${i === todayIdx ? ' highlight' : ''}`}
+                style={{ width: '100%', height: `${(v / maxVal) * 100}%` }}
+              />
+              <div style={{ fontSize: 12, color: i === todayIdx ? '#F97316' : '#64748B', fontFamily: 'Barlow Condensed', fontWeight: 600 }}>{days[i]}</div>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: 'flex', gap: 16, marginTop: 20 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 10, height: 10, background: '#F97316', borderRadius: 2 }}></div>
+            <span style={{ color: '#94A3B8', fontSize: 12 }}>Today</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ width: 10, height: 10, background: 'rgba(249,115,22,0.25)', borderRadius: 2 }}></div>
+            <span style={{ color: '#94A3B8', fontSize: 12 }}>Other days</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Recent workouts */}
+      <div className="glass" style={{ padding: 24, marginTop: 20 }}>
+        <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 18, color: '#F8FAFC', marginBottom: 16 }}>RECENT WORKOUTS</div>
+        {[
+          { name: 'Upper Body Strength', duration: '45 min', cal: 320, date: 'Today' },
+          { name: 'HIIT Cardio Blast', duration: '30 min', cal: 280, date: 'Yesterday' },
+          { name: 'Lower Body Focus', duration: '50 min', cal: 350, date: '2 days ago' },
+        ].map((w, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 0', borderBottom: i < 2 ? '1px solid rgba(249,115,22,0.08)' : 'none' }}>
+            <div>
+              <div style={{ color: '#F8FAFC', fontWeight: 500, fontSize: 14 }}>{w.name}</div>
+              <div style={{ color: '#64748B', fontSize: 12, marginTop: 2 }}>{w.date} · {w.duration}</div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ color: '#F97316', fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 16 }}>{w.cal}</div>
+              <div style={{ color: '#64748B', fontSize: 11 }}>kcal</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ─── Try On Tab ──────────────────────────────────────────────────────────────
+
+function TryOnTab({ photos, profile, onSaveToHistory, onGoToProfile }) {
+  const [itemName, setItemName] = useState('');
+  const [brand, setBrand] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const category = itemName.trim() ? detectCategory(itemName) : null;
+  const hasFront = !!(photos && photos.front);
+  const hasName = itemName.trim().length > 0;
+  const canGenerate = hasFront && hasName;
+
+  const { size } = profile && (profile.chest || profile.waist || profile.arm)
+    ? recommendSize(profile)
+    : { size: 'M' };
+
+  function handleGenerate() {
+    if (!canGenerate) return;
+    setLoading(true);
+    setTimeout(() => {
+      const entry = {
+        id: uid(),
+        itemName: itemName.trim(),
+        brand: brand.trim(),
+        itemImageUrl: imageUrl.trim(),
+        category: detectCategory(itemName),
+        sizeRecommended: size,
+        createdAt: new Date().toISOString(),
+      };
+      setResult(entry);
+      onSaveToHistory(entry);
+      setLoading(false);
+    }, 900);
+  }
+
+  function handleReset() {
+    setResult(null);
+    setItemName('');
+    setBrand('');
+    setImageUrl('');
+  }
+
+  return (
+    <div className="fade-in">
+      <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, marginBottom: 24, color: '#F8FAFC', letterSpacing: '0.02em' }}>VIRTUAL TRY-ON</h2>
+
+      {!hasFront && (
+        <div style={{ background: 'rgba(239,68,68,0.1)', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 14, padding: '18px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, marginBottom: 24 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12 }}>
+            <span style={{ fontSize: 20, flexShrink: 0 }}>⚠️</span>
+            <div>
+              <div style={{ color: '#f87171', fontWeight: 600, fontSize: 14 }}>No front photo found</div>
+              <div style={{ color: '#94A3B8', fontSize: 13, marginTop: 2 }}>Please upload a full-body photo in the Profile tab first.</div>
+            </div>
+          </div>
+          <button className="btn-primary" onClick={onGoToProfile} style={{ padding: '9px 18px', borderRadius: 10, fontSize: 13, flexShrink: 0 }}>Go to Profile</button>
+        </div>
+      )}
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 24 }}>
+        {/* Input form */}
+        <div className="glass" style={{ padding: 24 }}>
+          <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 20 }}>ITEM DETAILS</div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div>
+              <label>Item Name *</label>
+              <input value={itemName} onChange={e => setItemName(e.target.value)} placeholder="e.g. Slim Fit Jeans, Oxford Shirt…" />
+              {category && (
+                <div style={{ marginTop: 8 }}>
+                  <CategoryPill category={category} />
+                </div>
+              )}
+            </div>
+            <div>
+              <label>Brand</label>
+              <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. Zara, H&M, Nike…" />
+            </div>
+            <div>
+              <label>Image URL (optional)</label>
+              <input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://example.com/item.jpg" />
+            </div>
+
+            {hasFront && (
+              <div>
+                <label style={{ marginBottom: 8 }}>Your photo (front)</label>
+                <div style={{ borderRadius: 10, overflow: 'hidden', border: '1px solid rgba(249,115,22,0.2)' }}>
+                  <img src={photos.front} alt="Front" style={{ width: '100%', maxHeight: 140, objectFit: 'cover', display: 'block' }} />
+                </div>
+              </div>
+            )}
+
+            <button
+              className="btn-primary"
+              onClick={handleGenerate}
+              disabled={!canGenerate || loading}
+              style={{
+                padding: '13px 0',
+                borderRadius: 12,
+                fontSize: 15,
+                marginTop: 4,
+                opacity: (!canGenerate || loading) ? 0.5 : 1,
+                cursor: (!canGenerate || loading) ? 'not-allowed' : 'pointer',
+              }}
+            >
+              {loading ? '⏳ Generating…' : '✨ Generate Try-On'}
+            </button>
+          </div>
+        </div>
+
+        {/* Result */}
+        {result && (
+          <div className="glass fade-in" style={{ padding: 24 }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 20 }}>TRY-ON RESULT</div>
+            <div style={{ borderRadius: 12, overflow: 'hidden', marginBottom: 16 }}>
+              {result.itemImageUrl ? (
+                <img src={result.itemImageUrl} alt={result.itemName} style={{ width: '100%', maxHeight: 200, objectFit: 'cover', display: 'block' }} onError={e => e.target.style.display='none'} />
+              ) : (
+                <GradientPlaceholder category={result.category} />
+              )}
+            </div>
+            <div style={{ fontWeight: 600, fontSize: 16, color: '#F8FAFC', marginBottom: 6 }}>{result.itemName}</div>
+            {result.brand && <div style={{ color: '#94A3B8', fontSize: 13, marginBottom: 12 }}>{result.brand}</div>}
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+              <CategoryPill category={result.category} />
+              <span className="pill" style={{ background: 'rgba(34,197,94,0.15)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}>
+                Recommended: {result.sizeRecommended}
+              </span>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, background: 'rgba(34,197,94,0.08)', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 10, padding: '10px 14px', marginBottom: 16 }}>
+              <span style={{ color: '#22C55E', fontSize: 16 }}>✓</span>
+              <span style={{ color: '#22C55E', fontSize: 13, fontWeight: 600 }}>Saved to History</span>
+            </div>
+            <button className="btn-ghost" onClick={handleReset} style={{ width: '100%', padding: '10px 0', borderRadius: 10, fontSize: 14 }}>
+              Try Another Item
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ─── Wardrobe Tab ────────────────────────────────────────────────────────────
+
+function WardrobeTab({ wardrobe, setWardrobe }) {
+  const [name, setName] = useState('');
+  const [brand, setBrand] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [price, setPrice] = useState('');
+  const [filter, setFilter] = useState('all');
+
+  const category = name.trim() ? detectCategory(name) : 'top';
+
+  function handleAdd(e) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    const item = { id: uid(), name: name.trim(), brand: brand.trim(), imageUrl: imageUrl.trim(), category: detectCategory(name), price: price.trim(), addedAt: new Date().toISOString() };
+    setWardrobe(prev => [item, ...prev]);
+    setName(''); setBrand(''); setImageUrl(''); setPrice('');
+  }
+
+  function handleDelete(id) {
+    setWardrobe(prev => prev.filter(i => i.id !== id));
+  }
+
+  const filters = [
+    { key: 'all', label: 'All' },
+    { key: 'top', label: 'Tops' },
+    { key: 'bottom', label: 'Bottoms' },
+    { key: 'dress', label: 'Dresses' },
+  ];
+
+  const filtered = filter === 'all' ? wardrobe : wardrobe.filter(i => i.category === filter);
+
+  return (
+    <div className="fade-in">
+      <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, marginBottom: 24, color: '#F8FAFC', letterSpacing: '0.02em' }}>MY WARDROBE</h2>
+
+      {/* Add form */}
+      <div className="glass" style={{ padding: 24, marginBottom: 24 }}>
+        <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 16 }}>ADD NEW ITEM</div>
+        <form onSubmit={handleAdd}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 14, marginBottom: 16 }}>
+            <div>
+              <label>Item Name *</label>
+              <input value={name} onChange={e => setName(e.target.value)} placeholder="e.g. White Linen Shirt" required />
+              {name.trim() && <div style={{ marginTop: 6 }}><CategoryPill category={category} /></div>}
+            </div>
+            <div>
+              <label>Brand</label>
+              <input value={brand} onChange={e => setBrand(e.target.value)} placeholder="e.g. Zara" />
+            </div>
+            <div>
+              <label>Image URL</label>
+              <input value={imageUrl} onChange={e => setImageUrl(e.target.value)} placeholder="https://…" />
+            </div>
+            <div>
+              <label>Price (optional)</label>
+              <input value={price} onChange={e => setPrice(e.target.value)} placeholder="e.g. $49.99" />
+            </div>
+          </div>
+          <button className="btn-primary" type="submit" style={{ padding: '11px 28px', borderRadius: 10, fontSize: 14 }}>
+            + Add to Wardrobe
+          </button>
+        </form>
+      </div>
+
+      {/* Filter pills */}
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 20 }}>
+        {filters.map(f => (
+          <button key={f.key} className={`tab-pill${filter === f.key ? ' active' : ''}`} onClick={() => setFilter(f.key)}
+            style={{ background: filter === f.key ? 'rgba(249,115,22,0.15)' : 'transparent' }}>
+            {f.label} {filter === f.key || f.key === 'all' ? `(${f.key === 'all' ? wardrobe.length : wardrobe.filter(i => i.category === f.key).length})` : ''}
+          </button>
+        ))}
+      </div>
+
+      {/* Grid */}
+      {filtered.length === 0 ? (
+        <div className="glass" style={{ padding: 48, textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>👗</div>
+          <div style={{ color: '#94A3B8', fontSize: 16 }}>
+            {wardrobe.length === 0 ? 'Your wardrobe is empty. Add your first item.' : 'No items in this category.'}
+          </div>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(200px,1fr))', gap: 16 }}>
+          {filtered.map(item => (
+            <div key={item.id} className="glass" style={{ padding: 16, position: 'relative', transition: 'transform 0.2s ease' }}
+              onMouseEnter={e => e.currentTarget.style.transform='translateY(-3px)'}
+              onMouseLeave={e => e.currentTarget.style.transform='translateY(0)'}>
+              <div style={{ borderRadius: 10, overflow: 'hidden', marginBottom: 12 }}>
+                {item.imageUrl ? (
+                  <img src={item.imageUrl} alt={item.name} style={{ width: '100%', height: 140, objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                ) : null}
+                <div style={{ display: item.imageUrl ? 'none' : 'flex' }}>
+                  <GradientPlaceholder category={item.category} size="md" />
+                </div>
+              </div>
+              <div style={{ fontWeight: 600, fontSize: 14, color: '#F8FAFC', marginBottom: 4, wordBreak: 'break-word' }}>{item.name}</div>
+              {item.brand && <div style={{ color: '#64748B', fontSize: 12, marginBottom: 8 }}>{item.brand}</div>}
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 6 }}>
+                <CategoryPill category={item.category} />
+                {item.price && <span style={{ color: '#F97316', fontSize: 13, fontWeight: 600 }}>{item.price}</span>}
+              </div>
+              <button
+                onClick={() => handleDelete(item.id)}
+                style={{ position: 'absolute', top: 10, right: 10, background: 'rgba(239,68,68,0.15)', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 8, width: 28, height: 28, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#f87171', fontSize: 13, transition: 'background 0.2s ease' }}
+                onMouseEnter={e => e.currentTarget.style.background='rgba(239,68,68,0.35)'}
+                onMouseLeave={e => e.currentTarget.style.background='rgba(239,68,68,0.15)'}
+              >×</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── History Tab ─────────────────────────────────────────────────────────────
+
+function HistoryTab({ history, setHistory }) {
+  const [confirmClear, setConfirmClear] = useState(false);
+
+  function handleClear() {
+    if (!confirmClear) { setConfirmClear(true); return; }
+    setHistory([]);
+    setConfirmClear(false);
+  }
+
+  const sorted = [...history].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+  return (
+    <div className="fade-in">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, color: '#F8FAFC', letterSpacing: '0.02em', margin: 0 }}>TRY-ON HISTORY</h2>
+        {history.length > 0 && (
+          <button className="btn-danger" onClick={handleClear} style={{ padding: '9px 18px', borderRadius: 10, fontSize: 13 }}>
+            {confirmClear ? 'Confirm Clear?' : 'Clear History'}
+          </button>
+        )}
+      </div>
+
+      {sorted.length === 0 ? (
+        <div className="glass" style={{ padding: 48, textAlign: 'center' }}>
+          <div style={{ fontSize: 48, marginBottom: 16 }}>🕐</div>
+          <div style={{ color: '#94A3B8', fontSize: 16 }}>No try-ons yet. Head to the Try On tab to get started.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          {sorted.map(entry => (
+            <div key={entry.id} className="glass fade-in" style={{ padding: 18, display: 'flex', gap: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+              <div style={{ borderRadius: 10, overflow: 'hidden', flexShrink: 0, width: 70, height: 80 }}>
+                {entry.itemImageUrl ? (
+                  <img src={entry.itemImageUrl} alt={entry.itemName} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} onError={e => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+                ) : null}
+                <div style={{ display: entry.itemImageUrl ? 'none' : 'flex', width: 70, height: 80 }}>
+                  <GradientPlaceholder category={entry.category} size="sm" />
+                </div>
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontWeight: 600, fontSize: 15, color: '#F8FAFC', marginBottom: 4 }}>{entry.itemName}</div>
+                {entry.brand && <div style={{ color: '#64748B', fontSize: 13, marginBottom: 8 }}>{entry.brand}</div>}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                  <CategoryPill category={entry.category} />
+                  <span className="pill" style={{ background: 'rgba(34,197,94,0.15)', color: '#22C55E', border: '1px solid rgba(34,197,94,0.3)' }}>
+                    Size: {entry.sizeRecommended}
+                  </span>
+                </div>
+              </div>
+              <div style={{ color: '#64748B', fontSize: 12, flexShrink: 0, textAlign: 'right' }}>{formatDate(entry.createdAt)}</div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ─── Profile Tab ─────────────────────────────────────────────────────────────
+
+function ProfileTab({ profile, setProfile, photos, setPhotos }) {
+  const [editing, setEditing] = useState(false);
+  const [draft, setDraft] = useState(profile);
+
+  useEffect(() => { setDraft(profile); }, [profile]);
+
+  const frontRef = useRef();
+  const sideRef = useRef();
+  const backRef = useRef();
+
+  function handlePhotoUpload(slot, e) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = ev => setPhotos(prev => ({ ...prev, [slot]: ev.target.result }));
+    reader.readAsDataURL(file);
+  }
+
+  function removePhoto(slot) {
+    setPhotos(prev => ({ ...prev, [slot]: null }));
+  }
+
+  function handleSave() {
+    setProfile(draft);
+    setEditing(false);
+  }
+
+  const measurements = [
+    { key: 'height', label: 'Height', unit: 'cm' },
+    { key: 'chest', label: 'Chest', unit: 'cm' },
+    { key: 'waist', label: 'Waist', unit: 'cm' },
+    { key: 'hips', label: 'Hips', unit: 'cm' },
+    { key: 'inseam', label: 'Inseam', unit: 'cm' },
+    { key: 'arm', label: 'Arm Length', unit: 'cm' },
+  ];
+
+  const hasMeasurements = measurements.some(m => profile[m.key] && !isNaN(parseFloat(profile[m.key])));
+  const sizeResult = hasMeasurements ? recommendSize(profile) : null;
+
+  const confidenceColor = { high: '#22C55E', medium: '#F97316', low: '#f87171' };
+
+  const photoSlots = [
+    { key: 'front', label: 'Front', badge: '📸 Used for Try-On', ref: frontRef },
+    { key: 'side', label: 'Side', ref: sideRef },
+    { key: 'back', label: 'Back', ref: backRef },
+  ];
+
+  return (
+    <div className="fade-in">
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24, flexWrap: 'wrap', gap: 12 }}>
+        <h2 style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 28, color: '#F8FAFC', letterSpacing: '0.02em', margin: 0 }}>MY PROFILE</h2>
+        {!editing && (
+          <button className="btn-primary" onClick={() => setEditing(true)} style={{ padding: '10px 22px', borderRadius: 10, fontSize: 14 }}>
+            Edit Profile
+          </button>
+        )}
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(320px,1fr))', gap: 24 }}>
+        {/* Left column */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+          {/* Identity card */}
+          <div className="glass" style={{ padding: 24 }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 16 }}>IDENTITY</div>
+            {!editing ? (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <Row label="Name" value={profile.name || '—'} />
+                <Row label="Gender" value={profile.gender ? profile.gender.charAt(0).toUpperCase() + profile.gender.slice(1) : '—'} />
+                <Row label="Preferred Size" value={profile.preferredSize || '—'} />
+              </div>
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <div>
+                  <label>Name</label>
+                  <input value={draft.name || ''} onChange={e => setDraft(p => ({...p, name: e.target.value}))} placeholder="Your name" />
+                </div>
+                <div>
+                  <label>Gender</label>
+                  <select value={draft.gender || ''} onChange={e => setDraft(p => ({...p, gender: e.target.value}))}>
+                    <option value="">Select…</option>
+                    <option value="male">Male</option>
+                    <option value="female">Female</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label>Preferred Size</label>
+                  <select value={draft.preferredSize || ''} onChange={e => setDraft(p => ({...p, preferredSize: e.target.value}))}>
+                    <option value="">Select…</option>
+                    {SIZE_ORDER.map(s => <option key={s} value={s}>{s}</option>)}
+                  </select>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Measurements card */}
+          <div className="glass" style={{ padding: 24 }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 16 }}>MEASUREMENTS</div>
+            {!editing ? (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {measurements.map(m => (
+                  <div key={m.key} style={{ background: 'rgba(15,17,23,0.5)', borderRadius: 10, padding: '12px 14px' }}>
+                    <div style={{ color: '#64748B', fontSize: 12, marginBottom: 4 }}>{m.label}</div>
+                    <div style={{ color: '#F8FAFC', fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 20 }}>
+                      {profile[m.key] || '—'}{profile[m.key] ? <span style={{ fontSize: 13, color: '#94A3B8', marginLeft: 3 }}>{m.unit}</span> : ''}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {measurements.map(m => (
+                  <div key={m.key}>
+                    <label>{m.label} ({m.unit})</label>
+                    <input
+                      type="number"
+                      value={draft[m.key] || ''}
+                      onChange={e => setDraft(p => ({...p, [m.key]: e.target.value}))}
+                      placeholder="—"
+                    />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Size recommendation */}
+          {hasMeasurements && sizeResult && (
+            <div className="glass" style={{ padding: 24 }}>
+              <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 16 }}>SIZE RECOMMENDATION</div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 16 }}>
+                <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 800, fontSize: 52, color: '#F97316', lineHeight: 1 }}>{sizeResult.size}</div>
+                <div>
+                  <div style={{ color: '#94A3B8', fontSize: 12, marginBottom: 4 }}>Confidence</div>
+                  <span className="pill" style={{ background: `rgba(${sizeResult.confidence === 'high' ? '34,197,94' : sizeResult.confidence === 'medium' ? '249,115,22' : '239,68,68'},0.15)`, color: confidenceColor[sizeResult.confidence], border: `1px solid rgba(${sizeResult.confidence === 'high' ? '34,197,94' : sizeResult.confidence === 'medium' ? '249,115,22' : '239,68,68'},0.3)` }}>
+                    {sizeResult.confidence.charAt(0).toUpperCase() + sizeResult.confidence.slice(1)}
+                  </span>
+                </div>
+              </div>
+              {sizeResult.breakdown.length > 0 && (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 13 }}>
+                  <thead>
+                    <tr style={{ borderBottom: '1px solid rgba(249,115,22,0.15)' }}>
+                      <th style={{ textAlign: 'left', color: '#64748B', padding: '6px 0', fontWeight: 600 }}>Measurement</th>
+                      <th style={{ textAlign: 'left', color: '#64748B', padding: '6px 0', fontWeight: 600 }}>Value</th>
+                      <th style={{ textAlign: 'left', color: '#64748B', padding: '6px 0', fontWeight: 600 }}>Suggested</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {sizeResult.breakdown.map((row, i) => (
+                      <tr key={i} style={{ borderBottom: i < sizeResult.breakdown.length-1 ? '1px solid rgba(249,115,22,0.08)' : 'none' }}>
+                        <td style={{ color: '#94A3B8', padding: '8px 0' }}>{row.label}</td>
+                        <td style={{ color: '#F8FAFC', padding: '8px 0' }}>{row.value}</td>
+                        <td style={{ color: '#F97316', fontWeight: 700, fontFamily: 'Barlow Condensed', padding: '8px 0' }}>{row.size}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          )}
+
+          {editing && (
+            <div style={{ display: 'flex', gap: 12 }}>
+              <button className="btn-primary" onClick={handleSave} style={{ flex: 1, padding: '13px 0', borderRadius: 12, fontSize: 15 }}>Save Profile</button>
+              <button className="btn-ghost" onClick={() => { setEditing(false); setDraft(profile); }} style={{ flex: 1, padding: '13px 0', borderRadius: 12, fontSize: 15 }}>Cancel</button>
+            </div>
+          )}
+        </div>
+
+        {/* Right column — photos */}
+        <div>
+          <div className="glass" style={{ padding: 24 }}>
+            <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 17, color: '#F8FAFC', marginBottom: 6 }}>BODY PHOTOS</div>
+            <div style={{ color: '#64748B', fontSize: 13, marginBottom: 16 }}>Used for virtual try-on. Photos stay on your device.</div>
+
+            {!photos.front && (
+              <div style={{ background: 'rgba(249,115,22,0.08)', border: '1px solid rgba(249,115,22,0.25)', borderRadius: 12, padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+                <span style={{ fontSize: 18 }}>📸</span>
+                <span style={{ color: '#F97316', fontSize: 13, fontWeight: 500 }}>Upload a front photo to enable Try-On</span>
+              </div>
+            )}
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
+              {photoSlots.map(slot => (
+                <div key={slot.key} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  <div
+                    className="photo-slot"
+                    onClick={() => !photos[slot.key] && slot.ref.current.click()}
+                    style={{ cursor: photos[slot.key] ? 'default' : 'pointer' }}
+                  >
+                    {photos[slot.key] ? (
+                      <>
+                        <img src={photos[slot.key]} alt={slot.label} />
+                        <button className="overlay-delete" onClick={e => { e.stopPropagation(); removePhoto(slot.key); }}>×</button>
+                      </>
+                    ) : (
+                      <>
+                        <span style={{ fontSize: 28, color: '#64748B' }}>+</span>
+                        <span style={{ color: '#64748B', fontSize: 12, marginTop: 4 }}>Upload</span>
+                      </>
+                    )}
+                  </div>
+                  <input ref={slot.ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handlePhotoUpload(slot.key, e)} />
+                  <div style={{ textAlign: 'center' }}>
+                    <div style={{ color: '#94A3B8', fontSize: 13, fontWeight: 600 }}>{slot.label}</div>
+                    {slot.badge && (
+                      <span className="pill" style={{ background: 'rgba(249,115,22,0.12)', color: '#F97316', border: '1px solid rgba(249,115,22,0.25)', fontSize: 10, marginTop: 4, display: 'inline-flex' }}>
+                        {slot.badge}
+                      </span>
+                    )}
+                  </div>
+                  {photos[slot.key] && !editing && (
+                    <button className="btn-ghost" onClick={() => slot.ref.current.click()} style={{ padding: '6px 0', borderRadius: 8, fontSize: 12, textAlign: 'center' }}>
+                      Change
+                    </button>
+                  )}
+                  {photos[slot.key] && <input ref={slot.ref} type="file" accept="image/*" style={{ display: 'none' }} onChange={e => handlePhotoUpload(slot.key, e)} />}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Row({ label, value }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid rgba(249,115,22,0.08)', paddingBottom: 10 }}>
+      <span style={{ color: '#64748B', fontSize: 13 }}>{label}</span>
+      <span style={{ color: '#F8FAFC', fontWeight: 500, fontSize: 14 }}>{value}</span>
+    </div>
+  );
+}
+
+// ─── Dashboard View ──────────────────────────────────────────────────────────
+
+function DashboardView({ onGoLanding, profile, setProfile, photos, setPhotos, wardrobe, setWardrobe, history, setHistory }) {
+  const [activeTab, setActiveTab] = useState('overview');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const navItems = [
+    { key: 'overview', emoji: '🏠', label: 'Overview' },
+    { key: 'tryon', emoji: '👕', label: 'Try On' },
+    { key: 'wardrobe', emoji: '👗', label: 'Wardrobe' },
+    { key: 'history', emoji: '🕐', label: 'History' },
+    { key: 'profile', emoji: '👤', label: 'Profile' },
+  ];
+
+  function navigate(key) {
+    setActiveTab(key);
+    setSidebarOpen(false);
+  }
+
+  function saveToHistory(entry) {
+    setHistory(prev => [entry, ...prev]);
+  }
+
+  const SIDEBAR_WIDTH = 220;
+
+  return (
+    <div style={{ minHeight: '100vh', background: '#0F1117', display: 'flex', flexDirection: 'column' }}>
+      {/* Top bar */}
+      <div className="glass-navbar" style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 200, height: 60, display: 'flex', alignItems: 'center', paddingLeft: 16, paddingRight: 16, gap: 12 }}>
+        <button
+          onClick={() => setSidebarOpen(o => !o)}
+          style={{ display: 'none', background: 'transparent', border: 'none', cursor: 'pointer', color: '#94A3B8', fontSize: 22, padding: 4, lineHeight: 1 }}
+          className="hamburger"
+        >☰</button>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <div style={{ width: 28, height: 28, background: 'linear-gradient(135deg,#F97316,#FB923C)', borderRadius: 7, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14 }}>⚡</div>
+          <span style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 20, letterSpacing: '0.08em', color: '#F8FAFC' }}>FIT-ME</span>
+        </div>
+        <div style={{ flex: 1 }} />
+        <button className="btn-ghost" onClick={onGoLanding} style={{ padding: '7px 16px', borderRadius: 9, fontSize: 13 }}>← Home</button>
+      </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .hamburger { display: flex !important; }
+          .desktop-sidebar { display: none !important; }
+          .main-shifted { margin-left: 0 !important; }
+        }
+      `}</style>
+
+      {/* Mobile sidebar backdrop */}
+      {sidebarOpen && (
+        <div onClick={() => setSidebarOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.6)', zIndex: 299, backdropFilter: 'blur(2px)' }} />
+      )}
+
+      {/* Sidebar */}
+      <div
+        className="desktop-sidebar"
+        style={{
+          position: 'fixed',
+          top: 60,
+          left: sidebarOpen ? 0 : undefined,
+          bottom: 0,
+          width: SIDEBAR_WIDTH,
+          background: 'rgba(15,17,23,0.95)',
+          borderRight: '1px solid rgba(249,115,22,0.12)',
+          padding: '20px 12px',
+          zIndex: 300,
+          overflowY: 'auto',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 4,
+          // mobile override via inline
+        }}
+      >
+        <div style={{ fontFamily: 'Barlow Condensed', fontWeight: 700, fontSize: 11, color: '#64748B', letterSpacing: '0.12em', padding: '4px 8px', marginBottom: 8 }}>NAVIGATION</div>
+        {navItems.map(item => (
+          <div
+            key={item.key}
+            className={`sidebar-item${activeTab === item.key ? ' active' : ''}`}
+            onClick={() => navigate(item.key)}
+          >
+            <span style={{ fontSize: 18 }}>{item.emoji}</span>
+            <span>{item.label}</span>
+            {item.key === 'history' && history.length > 0 && (
+              <span style={{ marginLeft: 'auto', background: 'rgba(249,115,22,0.2)', color: '#F97316', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 700 }}>{history.length}</span>
+            )}
+            {item.key === 'wardrobe' && wardrobe.length > 0 && (
+              <span style={{ marginLeft: 'auto', background: 'rgba(249,115,22,0.2)', color: '#F97316', borderRadius: 999, padding: '1px 7px', fontSize: 11, fontWeight: 700 }}>{wardrobe.length}</span>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {/* Mobile sidebar (overlay) */}
+      <div style={{
+        position: 'fixed',
+        top: 60,
+        left: sidebarOpen ? 0 : -SIDEBAR_WIDTH,
+        bottom: 0,
+        width: SIDEBAR_WIDTH,
+        background: 'rgba(15,17,23,0.98)',
+        borderRight: '1px solid rgba(249,115,22,0.15)',
+        padding: '20px 12px',
+        zIndex: 300,
+        overflowY: 'auto',
+        display: 'none',
+        flexDirection: 'column',
+        gap: 4,
+        transition: 'left 0.25s ease',
+      }} className="mobile-sidebar">
+        {navItems.map(item => (
+          <div key={item.key} className={`sidebar-item${activeTab === item.key ? ' active' : ''}`} onClick={() => navigate(item.key)}>
+            <span style={{ fontSize: 18 }}>{item.emoji}</span>
+            <span>{item.label}</span>
+          </div>
+        ))}
+      </div>
+
+      <style>{`
+        @media (max-width: 767px) {
+          .mobile-sidebar { display: flex !important; }
+        }
+      `}</style>
+
+      {/* Main content */}
+      <div className="main-shifted" style={{ marginLeft: SIDEBAR_WIDTH, marginTop: 60, padding: '32px 28px', minHeight: 'calc(100vh - 60px)', maxWidth: 'calc(100vw - 220px)' }}>
+        <style>{`@media(max-width:767px){ .main-shifted { margin-left:0 !important; max-width:100vw !important; padding:24px 16px !important; } }`}</style>
+        {activeTab === 'overview' && <OverviewTab />}
+        {activeTab === 'tryon' && <TryOnTab photos={photos} profile={profile} onSaveToHistory={saveToHistory} onGoToProfile={() => navigate('profile')} />}
+        {activeTab === 'wardrobe' && <WardrobeTab wardrobe={wardrobe} setWardrobe={setWardrobe} />}
+        {activeTab === 'history' && <HistoryTab history={history} setHistory={setHistory} />}
+        {activeTab === 'profile' && <ProfileTab profile={profile} setProfile={setProfile} photos={photos} setPhotos={setPhotos} />}
+      </div>
+    </div>
+  );
+}
+
+// ─── Root App ────────────────────────────────────────────────────────────────
+
+function App() {
+  const [view, setView] = useState('landing');
+
+  const [profile, setProfileState] = useState(() => safeLocalGet('fitme_profile', {
+    name: '', gender: '', preferredSize: '', height: '', chest: '', waist: '', hips: '', inseam: '', arm: ''
+  }));
+  const [photos, setPhotosState] = useState(() => safeLocalGet('fitme_photos', { front: null, side: null, back: null }));
+  const [wardrobe, setWardrobeState] = useState(() => safeLocalGet('fitme_wardrobe', []));
+  const [history, setHistoryState] = useState(() => safeLocalGet('fitme_history', []));
+
+  function setProfile(v) {
+    const val = typeof v === 'function' ? v(profile) : v;
+    setProfileState(val);
+    safeLocalSet('fitme_profile', val);
+  }
+  function setPhotos(v) {
+    const val = typeof v === 'function' ? v(photos) : v;
+    setPhotosState(val);
+    safeLocalSet('fitme_photos', val);
+  }
+  function setWardrobe(v) {
+    const val = typeof v === 'function' ? v(wardrobe) : v;
+    setWardrobeState(val);
+    safeLocalSet('fitme_wardrobe', val);
+  }
+  function setHistory(v) {
+    const val = typeof v === 'function' ? v(history) : v;
+    setHistoryState(val);
+    safeLocalSet('fitme_history', val);
+  }
+
+  if (view === 'landing') {
+    return <LandingView onOpenDashboard={() => setView('dashboard')} />;
+  }
+  return (
+    <DashboardView
+      onGoLanding={() => setView('landing')}
+      profile={profile}
+      setProfile={setProfile}
+      photos={photos}
+      setPhotos={setPhotos}
+      wardrobe={wardrobe}
+      setWardrobe={setWardrobe}
+      history={history}
+      setHistory={setHistory}
+    />
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+</script>
+</body>
+</html>
